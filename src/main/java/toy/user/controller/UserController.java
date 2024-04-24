@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("api")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     //회원가입
     @PostMapping("/user/join")
