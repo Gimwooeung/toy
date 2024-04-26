@@ -1,6 +1,9 @@
 package toy.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +16,17 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
+
+    @Operation
+    // 회원 가입
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<String>> signup(
             @Valid @RequestBody RequestDto requestDto, BindingResult bindingResult) {
@@ -30,7 +38,7 @@ public class UserController {
     public ResponseEntity<List<User>> listUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "id") String sort) {
+            @RequestParam(defaultValue = "userid") String sort) {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
