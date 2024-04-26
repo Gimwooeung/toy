@@ -1,6 +1,7 @@
 package toy.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     //회원가입
     public ResponseEntity<ApiResponse<String>> createUser(RequestDto requestDto, BindingResult bindingResult) {
@@ -52,15 +57,39 @@ public class UserService {
     }
 
 
-    //회원정보조회
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    // 회원정보 조회 (정렬 기능 추가)
+    public List<User> getAllUsers(String sort) {
+        Sort.Order order;
+        if ("userid".equals(sort)) {
+            order = Sort.Order.asc("userid");
+        } else {
+            order = Sort.Order.desc("createdAt");
+        }
+        Sort sorting = Sort.by(order);
+        return userRepository.findAll(sorting);
     }
 
-    //회원정보수정
-    public void updateUser(String userid, User user) {
-        user.setUserid(userid);
+    public ResponseEntity<?> updateUser(String userid, RequestDto requestDto) {
+        // 해당 userid를 가진 사용자 정보를 조회
+        User user = userRepository.findByUserid(userid);
+
+        // 사용자가 존재하지 않는 경우
+        if (user == null) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("해당하는 사용자가 없습니다."));
+        }
+
+        // 사용자 정보 업데이트
+        user.setPassword(requestDto.getPassword());
+        user.setName(requestDto.getName());
+        user.setNickname(requestDto.getNickname());
+        user.setTel(requestDto.getTel());
+        user.setEmail(requestDto.getEmail());
+
+        // 수정된 사용자 정보 저장
         userRepository.save(user);
+
+        // 성공 메시지 반환
+        return ResponseEntity.ok(ApiResponse.successMessage("사용자 정보가 성공적으로 수정되었습니다."));
     }
 
     // 사용자 아이디 중복 확인

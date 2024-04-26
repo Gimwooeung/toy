@@ -6,4 +6,6 @@ import toy.user.Entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUserid(String userid);
+
+    User findByUserid(String userid);
 }
