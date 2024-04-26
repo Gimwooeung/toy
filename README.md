@@ -2,6 +2,7 @@
 
 ## 프로젝트 소개
 > 목적 : 회원 관련 기능 restful api 백엔드 서버를 만들기
+
 > 노션 정리 사이트 : https://www.notion.so/0d8a056c5f8344d587c139539ccb9c7e
 
 ## 🗓 프로젝트 기간
