@@ -33,16 +33,20 @@ public class UserController {
         return userService.createUser(requestDto, bindingResult);
     }
 
-    @Operation(summary = "회원 정보 조회", description = "회원 정보 조회, page 0 시작, pageSize : 10개, 정렬 CreatedAt, userid")
-    //회원정보조회
+    @Operation(summary = "회원 정보 조회", description = "회원 정보 조회, page 0 시작, pageSize : 3개, 정렬 CreatedAt내림차순, userid오름차순")
     @GetMapping("/list")
     public ResponseEntity<List<User>> listUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "userid") String sort) {
-        List<User> users = userService.getAllUsers(sort);
+            @RequestParam(defaultValue = "3") int pageSize,
+            @RequestParam(defaultValue = "createdAt") String sortBy1,
+            @RequestParam(defaultValue = "desc") String sortOrder1,
+            @RequestParam(defaultValue = "userid") String sortBy2,
+            @RequestParam(defaultValue = "asc") String sortOrder2) {
+        List<User> users = userService.getAllUsers(page, pageSize, sortBy1, sortOrder1, sortBy2, sortOrder2);
         return ResponseEntity.ok(users);
     }
+
+
 
     @Operation(summary = "회원 정보 수정", description = "회원 정보 수정")
     //회원정보수정

@@ -1,6 +1,9 @@
 package toy.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,17 +60,16 @@ public class UserService {
     }
 
 
-    // 회원정보 조회 (정렬 기능 추가)
-    public List<User> getAllUsers(String sort) {
-        Sort.Order order;
-        if ("userid".equals(sort)) {
-            order = Sort.Order.asc("userid");
-        } else {
-            order = Sort.Order.desc("createdAt");
-        }
-        Sort sorting = Sort.by(order);
-        return userRepository.findAll(sorting);
+    // 회원정보 조회 (페이지네이션 및 정렬 기능 추가)
+    public List<User> getAllUsers(int page, int pageSize, String sortBy1, String sortOrder1, String sortBy2, String sortOrder2) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortOrder1), sortBy1)
+                .and(Sort.by(Sort.Direction.fromString(sortOrder2), sortBy2));
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage.getContent();
     }
+
+
 
     public ResponseEntity<?> updateUser(String userid, RequestDto requestDto) {
         // 해당 userid를 가진 사용자 정보를 조회
